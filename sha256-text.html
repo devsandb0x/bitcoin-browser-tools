@@ -1,0 +1,22 @@
+<html>
+<head>
+  <title>SHA256 Text</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<h2>SHA256 Text</h2>
+<input placeholder="text to hash" id="input" autofocus/>
+
+<div id="result"></div>
+
+</body>
+</html>
+<script>
+  document.querySelector("#input").addEventListener('input', function(e){
+    crypto.subtle.digest('SHA-256', new TextEncoder().encode(e.target.value))
+      .then(function(r){
+        document.querySelector("#result").innerText = Array.from(new Uint8Array(r))
+          .map(function(b){ return b.toString(16).padStart(2, '0')}).join('');
+      });
+  })
+</script>

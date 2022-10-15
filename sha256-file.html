@@ -1,0 +1,27 @@
+<html>
+<head>
+  <title>SHA256 Text</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<h2>SHA256 File</h2>
+<input type='file' id="input"/>
+
+<div id="result"></div>
+
+</body>
+</html>
+<script>
+  document.querySelector("#input").addEventListener('input', function(e) {
+    e.target.files[0].arrayBuffer().then(function (b) {
+      crypto.subtle.digest('SHA-256', b)
+        .then(function (r) {
+          document.querySelector("#result").innerText = Array.from(new Uint8Array(r))
+            .map(function (b) {
+              return b.toString(16).padStart(2, '0')
+            }).join('');
+        });
+    })
+
+  })
+</script>

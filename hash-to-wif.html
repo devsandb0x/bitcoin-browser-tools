@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title>HASH to WIF</title>
+  <script src="js/base58.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+<h2>HASH to WIF (compressed)</h2>
+<input placeholder="HEX" id="input" autofocus/>
+
+<div id="result"></div>
+
+</body>
+</html>
+<script>
+  document.querySelector("#input").addEventListener('input', function(e){
+    var value = e.target.value
+    var entropyHex = '80'+value+'01' //80 - pubnet; 01 - compressed
+    var entropy = entropyHex.match(/../g).map(function(i){ return parseInt(i, 16)})
+    crypto.subtle.digest('SHA-256', new Uint8Array(entropy).buffer)
+      .then(function(r){ return crypto.subtle.digest('SHA-256', r) })
+      .then(function(r){ return Array.from(new Uint8Array(r)).slice(0,4) })
+      .then(function(crc){
+        var wif = base58.encode(new Uint8Array(entropy.concat(crc)))
+        document.querySelector("#result").innerText = wif
+      });
+  })
+</script>
