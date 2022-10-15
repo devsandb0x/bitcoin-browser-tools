@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>BIP32</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="js/bip32/elliptic.min.js"></script>
+  <script src="js/bip32/secp256k1.js"></script>
+  <script src="js/bip32/tiny-secp256k1.js"></script>
+  <script src="js/base58.js"></script>
+  <script src="js/bip32/bip32.js"></script>
+  <script src="js/wif.js"></script>
+  <style>
+    table td{padding:5px}
+  </style>
+</head>
+<body>
+<h2>BIP32</h2>
+<input placeholder="xprv9s21ZrQH143K..." id="input" autofocus/>
+<input value="m/44'/0'/0'/0/i" id="input2"/>
+
+<div id="result"></div>
+
+</body>
+</html>
+<script>
+
+  const render = (items)=>{
+    let html = `<table><tr><th>path</th><th>private key</th></tr>`+
+      items.map(i => `<tr><td>${i[0]}</td><td>${i[1]}</td></tr>`).join("")+
+    `</table>`
+    document.querySelector("#result").innerHTML = html
+  }
+
+  [...document.querySelectorAll("#input,#input2")].forEach( i => i.addEventListener('input', async(e)=>{
+    try {
+      let key = document.querySelector("#input").value
+      let path = document.querySelector("#input2").value
+      let b32 = new BIP32
+      await b32.init(key)
+
+      let keys = []
+
+      for(let i = 0; i<=150; i++){
+        let gPath = path.replace(/i/, i)
+        keys.push([gPath, await toWIF((await b32.derivePath(gPath)).privateKey)])
+        render(keys)
+      }
+
+    }catch(e){
+      console.error(e)
+      document.querySelector("#result").innerText = e.message
+    }
+  }))
+</script>
