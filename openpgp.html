@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>OpenPGP</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="js/openpgp.min.js"></script>
+</head>
+<body>
+<h2>OpenPGP</h2>
+<input type="file" id="file"/>
+<input placeholder="file hex" id="input"/>
+<input type="password" placeholder="password" id="input2"/>
+<button>decode</button>
+
+<div id="result" style="text-align: left; max-width: 900px;margin-top:20px; "></div>
+
+</body>
+</html>
+<script>
+  document.querySelector("#file").addEventListener('input', function(e) {
+    e.target.files[0].arrayBuffer().then(function (b) {
+      let hex = [...new Uint8Array(b)].map(function (b) {
+        return b.toString(16).padStart(2, '0')
+      }).join('');
+      document.querySelector("#input").value = hex
+    })
+  })
+
+
+  document.querySelector("button").addEventListener('click', async(e)=>{
+
+    let hex = document.querySelector("#input").value
+    let pass = document.querySelector("#input2").value
+
+    try{
+
+      for (var bytes = [], c = 0; c < hex.length; c += 2) bytes.push(parseInt(hex.substr(c, 2), 16));
+      bytes = new Uint8Array(bytes);
+
+      let msg = await openpgp.readMessage({binaryMessage: bytes})
+      let result = await openpgp.decrypt({
+          message: msg,
+          passwords: [pass],
+      })
+
+      document.querySelector("#result").innerText = result.data
+
+    }catch(e){
+      console.error(e)
+      document.querySelector("#result").innerText = e.message
+    }
+
+  })
+</script>
