@@ -6,22 +6,30 @@
 <body>
 <h2>SHA256 File</h2>
 <input type='file' id="input"/>
-
-<div id="result"></div>
+<input type='text' id="input_url" placeholder="or url.."/>
+<br/>
+<input id="result" placeholder='[result hash]'>
 
 </body>
 </html>
 <script>
-  document.querySelector("#input").addEventListener('input', function(e) {
-    e.target.files[0].arrayBuffer().then(function (b) {
-      crypto.subtle.digest('SHA-256', b)
+  function hash(b){
+  console.log(b)
+    crypto.subtle.digest('SHA-256', b)
         .then(function (r) {
-          document.querySelector("#result").innerText = Array.from(new Uint8Array(r))
+          document.querySelector("#result").value = Array.from(new Uint8Array(r))
             .map(function (b) {
               return b.toString(16).padStart(2, '0')
             }).join('');
-        });
-    })
-
+        });  
+  }
+  document.querySelector("#input").addEventListener('input', function(e) {
+    e.target.files[0].arrayBuffer().then(function (b) { hash(b) })
   })
+  document.querySelector("#input_url").addEventListener('input', function(e) {
+    fetch(e.target.value).then(function(r){ 
+      if(!r.ok) throw 'failed to fetch'
+      return r.arrayBuffer()
+    }).then(hash).catch(function(e){ document.querySelector("#result").value = e})
+  })  
 </script>

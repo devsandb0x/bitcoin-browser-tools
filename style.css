@@ -1,6 +1,6 @@
 body{
   display: flex;
-  font-size:20px;
+  font-size:16px;
   font-weight: 400;
   justify-content: center;
   align-items: center;
@@ -13,13 +13,16 @@ h2{
   font-weight: 400;
   margin-bottom: 10px;
 }
-input{
-  padding:10px;
+input, textarea{
+  padding:5px;
   width: 100%;
   max-width: 750px;
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
   margin-bottom:10px
+}
+textarea{
+  height:115px;
 }
 a{
   color:#333;
